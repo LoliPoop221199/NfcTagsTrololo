@@ -3,39 +3,58 @@
 <head>
   <meta charset="utf-8">
   <title>HA-HA!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body,html{margin:0;padding:0;height:100%;background:#000;overflow:hidden}
-    .nelson {
+    * { margin:0; padding:0; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    body {
+      background: #000 url('bg.jpg') center center / cover no-repeat fixed;
+    }
+    .text {
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      font: bold 15vw "Comic Sans MS", cursive;
+      font: bold 15vw/1 "Comic Sans MS", cursive, sans-serif;
       color: yellow;
       text-shadow: 8px 8px 0 red;
       pointer-events: none;
+      user-select: none;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      .text { font-size: 18vw; }
     }
   </style>
 </head>
 <body>
 
-  <h1 class="nelson">HA-HA!</h1>
+  <div class="text">HA-HA!</div>
 
-  <audio id="haha" src="nelson-simpsons-haha.mp3" preload="auto"></audio>
+  <audio id="nelson" preload="auto">
+    <source src="nelson-simpsons-haha.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
-    const audio = document.getElementById('haha');
-    audio.volume = 1;
+    const audio = document.getElementById('nelson');
+    audio.volume = 1.0;
 
-    function tryPlay() {
+    function playNelson() {
       audio.play().catch(() => {
-        document.body.onclick = document.body.ontouchstart = () => {
+        const unlock = () => {
           audio.play();
-          document.body.onclick = document.body.ontouchstart = null;
+          document.removeEventListener('click', unlock);
+          document.removeEventListener('touchstart', unlock);
         };
+        document.addEventListener('click', unlock);
+        document.addEventListener('touchstart', unlock);
       });
     }
 
-    window.onload = tryPlay;
+    window.addEventListener('load', playNelson);
   </script>
+
 </body>
 </html>
