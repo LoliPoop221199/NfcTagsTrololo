@@ -5,9 +5,15 @@
   <title>HA-HA!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    *{margin:0;padding:0}
+    *{margin:0;padding:0;box-sizing:border-box}
     html,body{height:100%;overflow:hidden}
-    body{background:#000 url('bg.jpg') center center/cover no-repeat fixed}
+    body{
+      background:#000 url('bg.jpg') center center/cover no-repeat fixed;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:"Comic Sans MS",cursive,sans-serif;
+    }
     .haha{
       position:absolute;
       top:50%;left:50%;
@@ -17,11 +23,37 @@
       text-shadow:8px 8px 0 red;
       pointer-events:none;
       user-select:none;
+      opacity:0;
+      transition:opacity 0.5s;
     }
-    @media(max-width:600px){.haha{font-size:20vw}}
+    .click-here{
+      position:absolute;
+      top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.5);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      z-index:10;
+    }
+    .click-text{
+      font:bold 8vw/1.2 "Comic Sans MS",cursive,sans-serif;
+      color:yellow;
+      text-shadow:4px 4px 0 red;
+      text-align:center;
+      padding:20px;
+    }
+    @media(max-width:600px){
+      .haha{font-size:20vw}
+      .click-text{font-size:10vw}
+    }
   </style>
 </head>
 <body>
+
+  <div class="click-here" id="clicker">
+    <div class="click-text">CLICK TO HA-HA!<br><small>Tap screen for Nelson!</small></div>
+  </div>
 
   <div class="haha">HA-HA!</div>
 
@@ -31,19 +63,33 @@
 
   <script>
     const nelson = document.getElementById('nelson');
+    const clicker = document.getElementById('clicker');
+    const haha = document.querySelector('.haha');
+    let unlocked = false;
+
     nelson.volume = 1;
 
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    gain.gain.value = 0.0001;
-    osc.start(0);
-    osc.stop(ctx.currentTime + 0.001);
+    clicker.addEventListener('click', unlock);
+    clicker.addEventListener('touchstart', unlock);
 
-    const delay = 1000 + Math.random() * 2000;
-    setTimeout(() => nelson.play(), delay);
+    function unlock() {
+      if (unlocked) return;
+      unlocked = true;
+      clicker.style.display = 'none';
+      haha.style.opacity = 1;
+
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.value = 0.0001;
+      osc.start(0);
+      osc.stop(ctx.currentTime + 0.001);
+
+      const delay = 1000 + Math.random() * 2000;
+      setTimeout(() => nelson.play(), delay);
+    }
   </script>
 
 </body>
