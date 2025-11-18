@@ -5,55 +5,45 @@
   <title>HA-HA!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * { margin:0; padding:0; }
-    html, body {
-      height: 100%;
-      overflow: hidden;
+    *{margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{background:#000 url('bg.jpg') center center/cover no-repeat fixed}
+    .haha{
+      position:absolute;
+      top:50%;left:50%;
+      transform:translate(-50%,-50%);
+      font:bold 15vw/1 "Comic Sans MS",cursive,sans-serif;
+      color:yellow;
+      text-shadow:8px 8px 0 red;
+      pointer-events:none;
+      user-select:none;
     }
-    body {
-      background: #000 url('bg.jpg') center center / cover no-repeat fixed;
-    }
-    .text {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font: bold 15vw/1 "Comic Sans MS", cursive, sans-serif;
-      color: yellow;
-      text-shadow: 8px 8px 0 red;
-      pointer-events: none;
-      user-select: none;
-      text-align: center;
-    }
-    @media (max-width: 600px) {
-      .text { font-size: 18vw; }
-    }
+    @media(max-width:600px){.haha{font-size:20vw}}
   </style>
 </head>
 <body>
 
-  <div class="text">HA-HA!</div>
+  <div class="haha">HA-HA!</div>
 
   <audio id="nelson" preload="auto">
     <source src="nelson-simpsons-haha.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    const audio = document.getElementById('nelson');
-    audio.volume = 1.0;
+    const nelson = document.getElementById('nelson');
+    nelson.volume = 1;
 
-    function playNelson() {
-      audio.play().catch(() => {
-        const unlock = () => {
-          audio.play();
-          document.removeEventListener('click', unlock);
-          document.removeEventListener('touchstart', unlock);
-        };
-        document.addEventListener('click', unlock);
-        document.addEventListener('touchstart', unlock);
-      });
-    }
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.value = 0.0001;
+    osc.start(0);
+    osc.stop(ctx.currentTime + 0.001);
 
-    window.addEventListener('load', playNelson);
+    const delay = 1000 + Math.random() * 2000;
+    setTimeout(() => nelson.play(), delay);
   </script>
 
 </body>
